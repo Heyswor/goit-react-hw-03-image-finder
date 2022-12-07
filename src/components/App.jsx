@@ -5,6 +5,8 @@ import { Button } from './Button/Button';
 import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
 import React, { Component } from 'react';
 import { searchImg } from './services/pixabiApi';
+import {Notify} from 'notiflix';
+import { Vortex } from 'react-loader-spinner';
 
 export class App extends Component {
   state = {
@@ -23,7 +25,7 @@ export class App extends Component {
         .then(data => {
           if (data.total === 0) {
             this.setState({ isLoading: false });
-            return alert(`Nothing was found for ${searchValue}`);
+            return Notify.failure(`Nothing was found for ${searchValue}`);
           }
           if (data.hits.length < 12) {
             this.setState({ loadMoreBtnShown: false });
@@ -74,6 +76,17 @@ export class App extends Component {
               <ImageGalleryItem key={element.id} image={element} />
             ))}
           </ImageGallery>
+        )}
+        {isLoading && (
+          <Vortex
+            visible={true}
+            height="200"
+            width="200"
+            ariaLabel="vortex-loading"
+            wrapperStyle={{}}
+            wrapperClass="vortexWrapper"
+            colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
+          />
         )}
 
         {entryData.length > 0 && !isLoading && loadMoreBtnShown && (

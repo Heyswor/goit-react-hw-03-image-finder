@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Modal } from '../Modal/Modal';
+import { ModalImg } from './ModalImg';
 
 import css from '../ImageGalleryItem/ImageGalleryItem.module.css';
 
@@ -28,13 +29,16 @@ export class ImageGalleryItem extends Component {
         className={css.galleryItem}
         onClick={this.handleToggleModal}
       >
-        <img src={image.webformatURL} alt={image.tags} width="400" />
+        <img src={image.webformatURL} alt={image.tags} />
         {this.state.isModalOpen && (
-          <Modal
-            onClose={this.handleToggleModal}
-            imgLink={image.largeImageURL}
-            imgAlt={image.tags}
-          />
+          <Modal onClose={this.handleToggleModal}>
+            <ModalImg imgLink={image.largeImageURL} imgAlt={image.tags} />
+          </Modal>
+          // <Modal
+          // onClose={this.handleToggleModal}
+          // imgLink={image.largeImageURL}
+          // imgAlt={image.tags}
+          // />
         )}
       </li>
     );

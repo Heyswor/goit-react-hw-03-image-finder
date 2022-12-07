@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Notify } from 'notiflix';
 import css from './Searchbar.module.css';
 
 export class Searchbar extends Component {
@@ -11,7 +12,7 @@ export class Searchbar extends Component {
   handleSumbmit = e => {
     e.preventDefault();
     if (this.state.searchValue.trim() === '') {
-      return alert('Put');
+      return Notify.failure('Put something for search');
     }
     this.props.onSubmit(this.state.searchValue);
     this.reset();
@@ -36,6 +37,7 @@ export class Searchbar extends Component {
             className={css.SearchFormInput}
             type="text"
             autoComplete="off"
+            value={this.state.searchValue}
             autoFocus
             placeholder="Search images and photos"
           />

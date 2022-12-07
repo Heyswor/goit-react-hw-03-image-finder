@@ -1,9 +1,5 @@
-import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
+import css from './ImageGallery.module.css';
 
-export const ImageGallery = () => {
-  return (
-    <ul class="gallery">
-      <ImageGalleryItem />
-    </ul>
-  );
+export const ImageGallery = ({ children }) => {
+  return <ul className={css.ImageGallery}>{children}</ul>;
 };

@@ -1,12 +1,85 @@
 // import {} from '';
 import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Button } from './Button/Button';
+import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
+import React, { Component } from 'react';
+import { searchImg } from './services/pixabiApi';
 
-// url https://pixabay.com/api/?q=cat&page=1&key=30513394-8e383ed067439270a89ebf2b5&image_type=photo&orientation=horizontal&per_page=12
+export class App extends Component {
+  state = {
+    searchValue: null,
+    page: 1,
+    isLoading: false,
+    entryData: [],
+    error: null,
+    loadMoreBtnShown: true,
+  };
 
-export const App = () => {
-  return (
-    <div>
-      <Searchbar />
-    </div>
-  );
-};
+  componentDidUpdate(prevProps, prevState) {
+    const { searchValue, page } = this.state;
+    if (prevState.searchValue !== searchValue || prevState.page !== page) {
+      searchImg(searchValue, page)
+        .then(data => {
+          if (data.total === 0) {
+            this.setState({ isLoading: false });
+            return alert(`Nothing was found for ${searchValue}`);
+          }
+          if (data.hits.length < 12) {
+            this.setState({ loadMoreBtnShown: false });
+          }
+          this.setState(prevState => ({
+            entryData: [...prevState.entryData, ...data.hits],
+            isLoading: false,
+          }));
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({ error });
+        });
+    }
+  }
+
+  handleDataAdd = searchValue => {
+    this.setState({
+      searchValue,
+      page: 1,
+      entryData: [],
+      isLoading: true,
+      loadMoreBtnShown: true,
+    });
+  };
+
+  handleLoadMoreBtnShown = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+      isLoading: true,
+    }));
+  };
+
+  render() {
+    const { isLoading, entryData, loadMoreBtnShown, searchValue } = this.state;
+
+    return (
+      <div>
+        <Searchbar
+          onSubmit={this.handleDataAdd}
+          isLoading={isLoading}
+          searchValue={searchValue}
+        />
+
+        {entryData.length > 0 && (
+          <ImageGallery>
+            {entryData.map(element => (
+              <ImageGalleryItem key={element.id} image={element} />
+            ))}
+          </ImageGallery>
+        )}
+
+        {entryData.length > 0 && !isLoading && loadMoreBtnShown && (
+          <Button text="Load More" onClick={this.handleLoadMoreBtnShown} />
+        )}
+      </div>
+    );
+  }
+}
